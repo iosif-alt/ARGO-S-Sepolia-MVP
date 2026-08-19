@@ -1,0 +1,25 @@
+node_modules/
+.env
+
+# Deployment manifests contain public addresses but are environment-specific.
+# Keep local manifests out of commits until they are reviewed.
+deployments/*.json
+
+# Artifacts
+build/
+bin/
+coverage/
+coverage.json
+typechain-types/
+artifacts/
+cache/
+docgen/
+flat/
+
+# IDEs
+.idea/
+.vscode/
+
+# NPM
+gas-report
+/bin/

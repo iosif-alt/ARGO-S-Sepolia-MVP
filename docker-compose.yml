@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: argos
+      POSTGRES_USER: argos
+      POSTGRES_PASSWORD: local-argo-password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/apps/platform-api/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U argos -d argos"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  deployer:
+    profiles: ["deploy"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.local
+    env_file: .env.runtime
+    command: ["./node_modules/.bin/hardhat", "run", "scripts/deploy-argo-s-public-testnet.ts", "--network", "ethereumSepolia"]
+    environment:
+      ARGO_ALLOWED_COUNTRIES: "804,616,276,250"
+      ARGO_AUTHORIZED_SUPPLY: "60000000"
+    volumes:
+      - ./backend/deployments:/app/deployments
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.local
+    env_file: .env.runtime
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    environment:
+      PORT: "3001"
+      DATABASE_URL: postgresql://argos:local-argo-password@postgres:5432/argos
+      CORS_ORIGIN: http://localhost:3000
+      ENABLE_DEMO_KYC: "true"
+      ARGO_BLOCKCHAIN_MODE: erc3643
+      ARGO_RPC_URL: ${ETHEREUM_SEPOLIA_RPC_URL}
+      ARGO_CHAIN_ID: "11155111"
+      ARGO_WALLET_DOMAIN: localhost
+      ARGO_MANIFEST_PATH: /app/deployments/ethereumSepolia-v2.json
+      TRONGRID_API_URL: https://nile.trongrid.io
+    volumes:
+      - ./backend/deployments:/app/deployments
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+  web:
+    build:
+      context: ./investor-web
+      dockerfile: Dockerfile.local
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

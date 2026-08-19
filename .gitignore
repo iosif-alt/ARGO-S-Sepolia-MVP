@@ -1,0 +1,45 @@
+.env.runtime
+backend/deployments/*.json
+# Секретные переменные окружения
+.env
+.env.*
+!.env.example
+
+# Приватные ключи
+*.pem
+*.key
+keystore/
+secrets/
+
+# Локальные резервные копии
+*.backup
+*.backup-*
+*.bak
+
+# Зависимости и результаты сборки
+node_modules/
+.next/
+dist/
+build/
+cache/
+artifacts/
+coverage/
+typechain/
+typechain-types/
+
+# Логи
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Локальные базы и Docker-данные
+postgres-data/
+pgdata/
+docker-data/
+
+# Редакторы и ОС
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

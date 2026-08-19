@@ -1,0 +1,95 @@
+{
+  "name": "@erc3643org/erc-3643",
+  "version": "4.1.3",
+  "description": "A fully compliant environment for the issuance and use of tokenized securities.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "files": [
+    "artifacts",
+    "contracts",
+    "index.js",
+    "index.d.ts",
+    "!contract/_testContracts",
+    "!artifacts/contracts/_testContracts",
+    "!contract/Migrations.sol",
+    "!artifacts/contracts/Migrations.sol",
+    "!artifacts/build-info"
+  ],
+  "scripts": {
+    "build": "hardhat compile",
+    "flatten": "node scripts/flatten.js",
+    "coverage": "hardhat coverage",
+    "test": "hardhat test",
+    "lint:ts": "eslint \"test/**/*.ts\"",
+    "lint:ts-fix": "eslint \"test/**/*.ts\" --fix",
+    "lint": "npm run lint:sol",
+    "lint:sol": "solhint \"contracts/**/*.sol\"",
+    "docs": "hardhat dodoc",
+    "prepare": "husky install",
+    "test:argo": "hardhat test test/argo-s/argo-s-mvp.test.ts",
+    "test:argo:v2": "hardhat test test/argo-s/argo-s-mvp.test.ts test/argo-s/argo-s-v2-compliance.test.ts",
+    "test:platform-api": "mocha -r ts-node/register apps/platform-api/test/**/*.test.ts",
+    "test:platform-api:erc3643": "RUN_ERC3643_INTEGRATION=true mocha -r ts-node/register apps/platform-api/test/erc3643.integration.test.ts",
+    "typecheck:platform-api": "tsc -p apps/platform-api/tsconfig.json --noEmit",
+    "start:platform-api": "ts-node apps/platform-api/src/server.ts",
+    "deploy:local": "hardhat run scripts/deploy-argo-s.ts",
+    "deploy:base-sepolia": "hardhat run scripts/deploy-argo-s-public-testnet.ts --network baseSepolia",
+    "deploy:ethereum-sepolia": "hardhat run scripts/deploy-argo-s-public-testnet.ts --network ethereumSepolia",
+    "deploy:ethereum-sepolia:v2": "hardhat run scripts/deploy-argo-s-public-testnet.ts --network ethereumSepolia"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ERC-3643/erc-3643.git"
+  },
+  "author": "ERC-3643 Organization",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/ERC-3643/erc-3643/issues"
+  },
+  "homepage": "https://github.com/ERC-3643/erc-3643#README",
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.1",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomiclabs/hardhat-solhint": "^3.0.1",
+    "@onchain-id/solidity": "^2.0.0",
+    "@openzeppelin/contracts": "^4.8.3",
+    "@openzeppelin/contracts-upgradeable": "^4.8.3",
+    "@openzeppelin/hardhat-upgrades": "^1.28.0",
+    "@primitivefi/hardhat-dodoc": "^0.2.3",
+    "@types/pg": "^8.15.5",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "@xyrusworx/hardhat-solidity-json": "^1.0.2",
+    "eslint": "^8.39.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-chai-friendly": "^0.7.2",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-security": "^1.7.1",
+    "eth-gas-reporter": "^0.2.27",
+    "fs-extra": "^11.1.1",
+    "glob": "^10.2.6",
+    "hardhat": "^2.14.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.2",
+    "prettier": "^2.8.8",
+    "prettier-plugin-solidity": "^1.1.3",
+    "solc": "^0.8.17",
+    "solhint": "^3.4.1",
+    "solhint-plugin-prettier": "^0.0.5"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint"
+    ]
+  },
+  "dependencies": {
+    "google-auth-library": "^10.3.0",
+    "pg": "^8.16.3"
+  }
+}
